@@ -4,6 +4,8 @@ let gridHeight = 20;
 let cellSize = 25;
 let currentColor = '#fef4f4'; // 桜色
 let paintMode = 'cell'; // 'cell' または 'round'（段モード）
+let hasBorder = true; // 縁取りの有無
+let borderWidth = 1.5; // 縁取りの幅（通常の1.5倍）
 
 // グリッドデータ（各セルの色を保存）
 let gridData = [];
@@ -156,9 +158,9 @@ function updateCurrentColorDisplay() {
     const selectedColor = colors.find(item => item.color === currentColor);
     if (selectedColor) {
         display.innerHTML = `
-            <div style="padding: 8px; text-align: center;">
-                <div style="font-weight: bold; margin-bottom: 4px; font-size: 0.95em; ${getBrightness(currentColor) > 128 ? 'color: #333' : 'color: #fff'}">${selectedColor.name}</div>
-                <div style="font-family: 'Courier New', monospace; font-size: 0.85em; ${getBrightness(currentColor) > 128 ? 'color: #555' : 'color: #eee'}">${selectedColor.color}</div>
+            <div style="padding: 6px; text-align: center;">
+                <div style="font-weight: bold; margin-bottom: 3px; font-size: 0.9em; ${getBrightness(currentColor) > 128 ? 'color: #333' : 'color: #fff'}">${selectedColor.name}</div>
+                <div style="font-family: 'Courier New', monospace; font-size: 0.8em; ${getBrightness(currentColor) > 128 ? 'color: #555' : 'color: #eee'}">${selectedColor.color}</div>
             </div>
         `;
     }
@@ -177,46 +179,91 @@ function initGrid() {
 
 // グリッドを描画
 function drawGrid() {
-    // Canvasのサイズを設定
-    canvas.width = gridWidth * cellSize;
-    canvas.height = gridHeight * cellSize;
-    
     // 中心座標
     const centerX = Math.floor(gridWidth / 2);
     const centerY = Math.floor(gridHeight / 2);
+    const maxRound = Math.max(centerX, centerY);
+    
+    // 縁取りを含めたサイズを計算
+    const borderSize = hasBorder ? cellSize * borderWidth : 0;
+    const totalBorder = borderSize * 2;
+    
+    canvas.width = gridWidth * cellSize + totalBorder;
+    canvas.height = gridHeight * cellSize + totalBorder;
+    
+    // 背景（縁取り）を描画
+    if (hasBorder) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 最外周の段の色を縁取りの色として使う
+        const outerRoundColor = roundColors[maxRound] || '#ffffff';
+        ctx.fillStyle = outerRoundColor;
+        
+        // 角丸の四角形で縁取りを描画
+        const cornerRadius = cellSize;
+        roundRect(ctx, 0, 0, canvas.width, canvas.height, cornerRadius, true, false);
+        
+        // 内側の白い部分（角丸）
+        ctx.fillStyle = '#ffffff';
+        const innerMargin = borderSize;
+        const innerWidth = canvas.width - innerMargin * 2;
+        const innerHeight = canvas.height - innerMargin * 2;
+        roundRect(ctx, innerMargin, innerMargin, innerWidth, innerHeight, cornerRadius * 0.7, true, false);
+    }
     
     // 各セルを描画
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
-            // セルの色を塗る
-            ctx.fillStyle = gridData[y][x];
-            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            const posX = x * cellSize + borderSize;
+            const posY = y * cellSize + borderSize;
             
-            // 通常のグリッド線
-            ctx.strokeStyle = '#DDDDDD';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            // セルの色を塗る（少し角丸に）
+            ctx.fillStyle = gridData[y][x];
+            roundRect(ctx, posX + 1, posY + 1, cellSize - 2, cellSize - 2, 4, true, false);
+            
+            // 薄いグリッド線
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 0.5;
+            ctx.strokeRect(posX, posY, cellSize, cellSize);
         }
     }
     
     // 段の境界線を描画（太線）
-    drawRoundBorders(centerX, centerY);
+    drawRoundBorders(centerX, centerY, borderSize);
+}
+
+// 角丸四角形を描画
+function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
 }
 
 // 段の境界線を描画
-function drawRoundBorders(centerX, centerY) {
+function drawRoundBorders(centerX, centerY, borderSize) {
     const maxRounds = Math.max(centerX, centerY, gridWidth - centerX, gridHeight - centerY);
     
-    ctx.strokeStyle = '#666666';
+    ctx.strokeStyle = '#999999';
     ctx.lineWidth = 2;
     
-    for (let round = 0; round <= maxRounds; round++) {
+    for (let round = 1; round <= maxRounds; round++) {
         // 段の境界を正方形で描画
-        const x1 = (centerX - round) * cellSize;
-        const y1 = (centerY - round) * cellSize;
+        const x1 = (centerX - round) * cellSize + borderSize;
+        const y1 = (centerY - round) * cellSize + borderSize;
         const size = (round * 2 + 1) * cellSize;
         
-        if (x1 >= 0 && y1 >= 0 && x1 + size <= canvas.width && y1 + size <= canvas.height) {
+        if (x1 >= borderSize && y1 >= borderSize) {
             ctx.strokeRect(x1, y1, size, size);
         }
     }
@@ -231,11 +278,18 @@ function setupEventListeners() {
         });
     });
     
+    // 縁取りの切り替え
+    document.getElementById('hasBorder').addEventListener('change', (e) => {
+        hasBorder = e.target.checked;
+        drawGrid();
+    });
+    
     // グリッドのクリック
     canvas.addEventListener('click', (e) => {
         const rect = canvas.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / cellSize);
-        const y = Math.floor((e.clientY - rect.top) / cellSize);
+        const borderSize = hasBorder ? cellSize * borderWidth : 0;
+        const x = Math.floor((e.clientX - rect.left - borderSize) / cellSize);
+        const y = Math.floor((e.clientY - rect.top - borderSize) / cellSize);
         
         if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
             if (paintMode === 'round') {
@@ -255,8 +309,9 @@ function setupEventListeners() {
         e.preventDefault();
         
         const rect = canvas.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / cellSize);
-        const y = Math.floor((e.clientY - rect.top) / cellSize);
+        const borderSize = hasBorder ? cellSize * borderWidth : 0;
+        const x = Math.floor((e.clientX - rect.left - borderSize) / cellSize);
+        const y = Math.floor((e.clientY - rect.top - borderSize) / cellSize);
         
         if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
             gridData[y][x] = '#ffffff'; // 白に戻す
@@ -287,8 +342,9 @@ function setupEventListeners() {
         if (!isDrawing) return;
         
         const rect = canvas.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / cellSize);
-        const y = Math.floor((e.clientY - rect.top) / cellSize);
+        const borderSize = hasBorder ? cellSize * borderWidth : 0;
+        const x = Math.floor((e.clientX - rect.left - borderSize) / cellSize);
+        const y = Math.floor((e.clientY - rect.top - borderSize) / cellSize);
         
         if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
             if (paintMode === 'round') {

@@ -15,8 +15,14 @@
         
         <main>
             <div class="workspace">
-                <!-- カラーパレット -->
+                <!-- グリッドコンテナ -->
+                <div class="grid-container">
+                    <canvas id="knittingGrid"></canvas>
+                </div>
+                
+                <!-- 右サイドバー -->
                 <aside class="sidebar">
+                    <!-- カラーパレット -->
                     <div class="color-palette">
                         <h2>カラーパレット</h2>
                         <p style="font-size: 0.8em; color: #666; margin-bottom: 8px;">日本の伝統色</p>
@@ -42,6 +48,13 @@
                             </label>
                         </div>
                         
+                        <div class="border-settings">
+                            <h3>縁取り設定</h3>
+                            <label>
+                                <input type="checkbox" id="hasBorder" checked> 縁取りを表示
+                            </label>
+                        </div>
+                        
                         <button id="clearBtn" class="btn">🗑️ クリア</button>
                         <button id="saveBtn" class="btn">💾 画像として保存</button>
                         
@@ -57,11 +70,6 @@
                         </div>
                     </div>
                 </aside>
-                
-                <!-- 編み図グリッド -->
-                <div class="grid-container">
-                    <canvas id="knittingGrid"></canvas>
-                </div>
             </div>
         </main>
         
