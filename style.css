@@ -1,0 +1,280 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+main {
+    padding: 30px;
+}
+
+.workspace {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+/* サイドバー */
+.sidebar {
+    flex: 0 0 420px;
+}
+
+.color-palette,
+.controls {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.color-palette h2,
+.controls h2 {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.colors {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 15px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.colors::-webkit-scrollbar {
+    width: 8px;
+}
+
+.colors::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.colors::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.colors::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.color-option {
+    width: 100%;
+    min-height: 50px;
+    padding: 6px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+}
+
+.color-option:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.color-option.selected {
+    border-color: #333;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #333;
+}
+
+.color-name {
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-bottom: 2px;
+    word-break: keep-all;
+    line-height: 1.2;
+}
+
+.color-code {
+    font-size: 0.65em;
+    font-family: 'Courier New', monospace;
+    opacity: 0.85;
+}
+
+.selected-color {
+    text-align: center;
+}
+
+.selected-color p {
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.color-display {
+    width: 100%;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    overflow: hidden;
+}
+
+/* コントロールボタン */
+.controls .btn,
+.controls .btn-small {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+
+.btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-small {
+    background: #6c757d;
+    color: white;
+    padding: 8px;
+    font-size: 0.9em;
+}
+
+.btn-small:hover {
+    background: #5a6268;
+}
+
+.grid-size {
+    margin-top: 20px;
+}
+
+.grid-size h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.grid-size label {
+    display: block;
+    margin: 10px 0;
+    font-size: 0.95em;
+}
+
+.grid-size input {
+    width: 60px;
+    padding: 5px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    margin-left: 5px;
+}
+
+.paint-mode {
+    margin-bottom: 20px;
+}
+
+.paint-mode h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.paint-mode label {
+    display: block;
+    margin: 8px 0;
+    font-size: 0.95em;
+    cursor: pointer;
+}
+
+.paint-mode input[type="radio"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* グリッドコンテナ */
+.grid-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    min-height: 500px;
+}
+
+#knittingGrid {
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: crosshair;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+footer {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: center;
+    color: #666;
+    font-size: 0.95em;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 968px) {
+    .workspace {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .colors {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

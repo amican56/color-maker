@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編み物カラーデザイナー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧶 編み物カラーデザイナー</h1>
+            <p>色を選んでグリッドをクリックすると、編み物のカラーパターンをデザインできます</p>
+        </header>
+        
+        <main>
+            <div class="workspace">
+                <!-- カラーパレット -->
+                <aside class="sidebar">
+                    <div class="color-palette">
+                        <h2>カラーパレット</h2>
+                        <p style="font-size: 0.8em; color: #666; margin-bottom: 8px;">日本の伝統色</p>
+                        <div class="colors" id="colorPalette">
+                            <!-- JavaScriptで生成 -->
+                        </div>
+                        <div class="selected-color">
+                            <p>選択中の色:</p>
+                            <div id="currentColor" class="color-display"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls">
+                        <h2>操作</h2>
+                        
+                        <div class="paint-mode">
+                            <h3>塗りモード</h3>
+                            <label>
+                                <input type="radio" name="paintMode" value="cell" checked> 1マスずつ
+                            </label>
+                            <label>
+                                <input type="radio" name="paintMode" value="round"> 段ごと
+                            </label>
+                        </div>
+                        
+                        <button id="clearBtn" class="btn">🗑️ クリア</button>
+                        <button id="saveBtn" class="btn">💾 画像として保存</button>
+                        
+                        <div class="grid-size">
+                            <h3>グリッドサイズ</h3>
+                            <label>
+                                横: <input type="number" id="gridWidth" value="20" min="5" max="50">
+                            </label>
+                            <label>
+                                縦: <input type="number" id="gridHeight" value="20" min="5" max="50">
+                            </label>
+                            <button id="resizeBtn" class="btn-small">サイズ変更</button>
+                        </div>
+                    </div>
+                </aside>
+                
+                <!-- 編み図グリッド -->
+                <div class="grid-container">
+                    <canvas id="knittingGrid"></canvas>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>1マスずつモード: クリック/ドラッグで色を塗る | 段ごとモード: クリックで段全体を塗る | 右クリック: 色を消す</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
